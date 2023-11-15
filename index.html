@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form  onsubmit="sending(event)">
+        <input type="text" name="username" id="" placeholder="username" >
+        <input type="email" name="email" id="" placeholder="email">
+        <input type="password" name="password" id="" placeholder="password">
+        <input type="text" name="number" id="" placeholder="number">
+        <input type="submit" value="send">
+    </form>
+
+    <form onsubmit="getdata(event)" >
+        <input type="text"  name="username">
+        <input type="submit" value="send">
+    </form>
+
+    <div id="data"></div>
+    
+    <form onsubmit="read_directory(event)">
+        <input type="submit" value="Director Read">
+    </form>
+
+    <script>
+
+        let read_directory = (event) =>{
+            event.preventDefault();
+            fetch(`http://localhost:3000/directory-read`)
+            .then(res => res.json())
+            .then(data => {
+                data.map(item => console.log(item.username))
+            })
+        }
+
+        let getdata = (event) =>{
+            event.preventDefault()
+            let formdata = new FormData(event.target)
+            let username = formdata.get("username")
+            fetch(`http://localhost:3000/get-data?username=${username}`)
+            .then(res => res.json())
+            .then(data =>{
+                let li = `<ul> <li>username :${data.username}</li> <li>Email :${data.email}</li> <li>Password :${data.password}</li> <li>Number :${data.number}</li> </ul>`
+                document.getElementById("data").innerHTML =li
+            })
+            
+        }
+        let sending = (event) =>{
+            event.preventDefault();
+            let formdata = new FormData(event.target);
+            let username = formdata.get("username")
+            let email = formdata.get("email")
+            let password = formdata.get("password")
+            let number = formdata.get("number")
+            fetch(`http://localhost:3000/api-data?username=${username}&email=${email}&password=${password}&number=${number}`)
+            .then(res => res.text())
+            .then(data => console.log(data))
+            .catch(er =>{
+                console.log(er);
+            })
+        }
+
+    </script>
+</body>
+</html>
